@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  fastapi-auth:
+    build: .
+    container_name: fastapi-auth-app
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount volume for data persistence
+      - ./data:/app/data
+      # Mount users.json for persistence
+      - ./users.json:/app/users.json
+    environment:
+      - SECRET_KEY=your-super-secret-key-change-in-production
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_HOURS=24
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
